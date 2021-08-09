@@ -1,7 +1,10 @@
 <script>
 	import { afterUpdate } from 'svelte';
+	import Carta from './components/Carta.svelte';
+
 	import verificaViradas from './utils/verificaViradas';
 	import verificaPares from './utils/verificaPares';
+	import embaralhaCartas from './utils/embaralhaCartas';
 	
 	let viradas;
 	let cartasBase = Array(12)
@@ -12,7 +15,7 @@
 			completa: false
 		}));
 	
-	let cartas = [];
+	let cartas = embaralhaCartas(cartasBase, 3);
 	
 	afterUpdate(() => {
 		viradas = verificaViradas(cartas);
@@ -23,8 +26,7 @@
 
 	function mudarQtdePares({ target }) {
 		const valor = Number(target.value);
-		const novasCartas = cartasBase.slice(0, valor);
-		cartas = novasCartas.concat(novasCartas);
+		cartas = embaralhaCartas(cartasBase, valor);
 	}
 	
 	function virarCarta(index, carta) {
@@ -39,7 +41,7 @@
 	}
 </script>
 
-<select on:change={mudarQtdePares}>
+<select on:change={mudarQtdePares} disabled={viradas}>
 	<option value="3">3 Pares</option>
 	<option value="6">6 Pares</option>
 	<option value="12">12 Pares</option>
@@ -47,9 +49,11 @@
 
 <div class="flex">
 	{#each cartas as carta, i}
-		<div class:virada={carta.virada} on:click={() => virarCarta(i, carta)}>{carta.valor}</div>
-	{:else}
-		<p>Insira a quantidade de pares</p>
+		<Carta
+			virada={carta.virada}
+			valor={carta.valor}
+			on:click={() => virarCarta(i, carta)}
+		/>
 	{/each}
 </div>
 
@@ -57,28 +61,11 @@
 	<p>Parabens você ganhou!!</p>
 {/if}
 
-
 <style>
 	.flex {
 		width: 310px;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 2px
-	}
-	
-	.flex div {
-		width: 50px;
-		height: 50px;
-		border: 1px solid;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background: black;
-		color: black;
-		cursor: pointer;
-	}
-	
-	div.virada {
-		background: white;
 	}
 </style>
