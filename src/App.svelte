@@ -1,6 +1,7 @@
 <script>
 	import { afterUpdate } from 'svelte';
 	import Carta from './components/Carta.svelte';
+	import Modal from './components/Modal.svelte';
 
 	import verificaViradas from './utils/verificaViradas';
 	import verificaPares from './utils/verificaPares';
@@ -15,7 +16,7 @@
 			completa: false
 		}));
 	
-	let cartas = embaralhaCartas(cartasBase, 3);
+	let cartas = [];
 	
 	afterUpdate(() => {
 		viradas = verificaViradas(cartas);
@@ -24,8 +25,8 @@
 		}
 	});
 
-	function mudarQtdePares({ target }) {
-		const valor = Number(target.value);
+	function mudarQtdePares({ detail }) {
+		const valor = Number(detail.valor);
 		cartas = embaralhaCartas(cartasBase, valor);
 	}
 	
@@ -41,24 +42,24 @@
 	}
 </script>
 
-<select on:change={mudarQtdePares} disabled={viradas}>
-	<option value="3">3 Pares</option>
-	<option value="6">6 Pares</option>
-	<option value="12">12 Pares</option>
-</select>
-
-<div class="flex">
-	{#each cartas as carta, i}
+{#if cartas.length}
+	<div class="flex">
+		{#each cartas as carta, i}
 		<Carta
-			virada={carta.virada}
-			valor={carta.valor}
-			on:click={() => virarCarta(i, carta)}
+		virada={carta.virada}
+		valor={carta.valor}
+		on:click={() => virarCarta(i, carta)}
 		/>
-	{/each}
-</div>
+		{/each}
+	</div>
 
-{#if cartas.length > 1 && cartas.every(carta => carta.completa)}
-	<p>Parabens você ganhou!!</p>
+	{#if cartas.every(carta => carta.completa)}
+		<Modal on:selecionar={mudarQtdePares}>
+			<p>Parabens você ganhou!!</p>
+		</Modal>
+	{/if}
+{:else}
+	<Modal on:selecionar={mudarQtdePares}/>
 {/if}
 
 <style>
