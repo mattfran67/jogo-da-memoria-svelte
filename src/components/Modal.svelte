@@ -31,13 +31,18 @@
     height: 100%;
     justify-content: center;
     align-items: center;
-    background: blueviolet;
+    background-image: linear-gradient(45deg, #913DAE, #9B50E7);
   }
-
+  
   .modal-fundo > div {
+    font-size: 1.2rem;
     background: white;
     display: flex;
+    flex: 0 1 400px;
     flex-direction: column;
+    border-radius: .5rem;
+    text-align: center;
     padding: 1rem;
+    box-shadow: 0 0 9px 4px rgb(0 0 0 / 20%);
   }
 </style>

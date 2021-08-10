@@ -8,9 +8,10 @@
 	import verificaPares from './utils/verificaPares';
 	import embaralhaCartas from './utils/embaralhaCartas';
 
-	let fimDeJogo;
-	let tempoDeJogo;
-	let contador;
+	const tempoVirar = 1500;
+	let fimDeJogo = false;
+	let tempoDeJogo = 0;
+	let contador = 0;
 	let viradas;
 
 	let cartasBase = Array(12)
@@ -24,14 +25,17 @@
 	let cartas = [];
 
 	$: if (cartas.length && cartas.every(({completa}) => completa)) {
-		fimDeJogo = true;
-		contador.parar();
+		setTimeout(() => {
+			fimDeJogo = true
+			contador.parar();
+			cartas = [];
+		}, tempoVirar);
 	}
 	
 	afterUpdate(() => {
 		viradas = verificaViradas(cartas);
 		if (viradas) {
-			setTimeout(() => cartas = viradas, 2000);
+			setTimeout(() => cartas = viradas, tempoVirar);
 		}
 	});
 
@@ -58,13 +62,17 @@
 	}
 </script>
 
-<div>
-	<Contador bind:this={contador} on:tempo={pegarTempo} />
-	<div class="flex">
+<div class="conteudo">
+	<div class="aba">
+		<Contador bind:this={contador} on:tempo={pegarTempo} />
+		<span>{cartas.length / 2} Pares</span>
+	</div>
+	<div class="grade">
 		{#each cartas as carta, i}
 			<Carta
 				virada={carta.virada}
 				valor={carta.valor}
+				completa={carta.completa}
 				on:click={() => virarCarta(i, carta)}
 			/>
 		{/each}
@@ -73,20 +81,62 @@
 
 {#if fimDeJogo}
 	<Modal on:selecionar={mudarQtdePares}>
-		<div>✨Parabéns você conseguiu!!✨</div>
-		<div>Tempo: {tempoDeJogo}</div>
+		<div class="vitoria">
+			<div>✨Parabéns você conseguiu!!✨</div>
+			<div>Tempo: {tempoDeJogo} segundos</div>
+		</div>
 	</Modal>
 {/if}
 
-{#if !cartas.length}
-	<Modal on:selecionar={mudarQtdePares}/>
+{#if !cartas.length && !fimDeJogo}
+	<Modal on:selecionar={mudarQtdePares}>
+		<div class="titulo">Jogo da Memoria</div>
+	</Modal>
 {/if}
 
 <style>
-	.flex {
-		width: 310px;
+	.grade {
+		display: grid;
+    grid-template-columns: repeat(6, 100px);
+    gap: 2px;
+    background: white;
+    padding: .5rem;
+    box-shadow: 0 -8px 5px 0px rgb(0 0 0 / 10%);
+	}
+
+	.grade, .aba, .conteudo {
+		border-radius: .5rem;
+	}
+
+	.titulo {
+		text-transform: uppercase;
+		font-size: 1.5rem;
+		letter-spacing: 2px;
+		font-weight: 300;
+		color: #777;
+		margin-bottom: .6rem;
+	}
+
+	.conteudo {
+    position: relative;
+    background: #913DAE;
+    box-shadow: 0 0 11px 9px rgb(0 0 0 / 10%);
+	}
+
+	.aba {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 2px
+    justify-content: space-between;
+    padding: 5px 8px;
+    color: white;
+		font-size: 1.5rem;
+	}
+
+	@media (max-width: 600px) {
+		.grade {
+			grid-template-columns: repeat(4, minmax(50px, 100px));
+		}
+		.vitoria {
+			font-size: 1.2rem;
+		}
 	}
 </style>

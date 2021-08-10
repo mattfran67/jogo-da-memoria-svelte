@@ -22,6 +22,3 @@
 </script>
 
 <span>Tempo: {tempo}</span>
-
-<style>
-</style>
