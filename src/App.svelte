@@ -116,7 +116,14 @@
 		color: #777;
 		margin-bottom: .6rem;
 	}
-
+  
+  .vitoria {
+    font-size: 1.5rem;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
 	.conteudo {
     position: relative;
     background: #913DAE;
