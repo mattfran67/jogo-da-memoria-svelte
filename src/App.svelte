@@ -24,7 +24,7 @@
 	
 	let cartas = [];
 
-	$: if (cartas.length && cartas.every(({completa}) => completa)) {
+	$: if (cartas.length && cartas.every(({ completa }) => completa)) {
 		setTimeout(() => {
 			fimDeJogo = true
 			contador.parar();
